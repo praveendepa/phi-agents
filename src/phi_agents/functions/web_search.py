@@ -1,14 +1,14 @@
 import os
 
-from phi.agent import Agent
+from agno.agent import Agent
 
-from phi.model.openai import OpenAIChat
-from phi.model.huggingface import HuggingFaceChat
-from phi.model.google import Gemini
-from phi.model.ollama import Ollama
-from phi.model.groq import Groq
+from agno.models.openai import OpenAIChat
+from agno.models.huggingface import HuggingFace
+from agno.models.google import Gemini
+from agno.models.ollama import Ollama
+from agno.models.groq import Groq
 
-from phi.tools.duckduckgo import DuckDuckGo
+from agno.tools.duckduckgo import DuckDuckGoTools
 
 from dotenv import load_dotenv
 
@@ -18,17 +18,17 @@ def web_agent():
     web_agent = Agent(
         name="Web Agent",
         role="Search the web for information",
-        # model=OpenAIChat(id="gpt-4o"),
+        model=OpenAIChat(id="gpt-4o"),
         # model=HuggingFaceChat(
         #     id="meta-llama/Meta-Llama-3-8B-Instruct", 
-        #     #id="meta-llama/Llama-3.2-3B-Instruct",
-        #     #max_tokens=500,
+        #     # id="meta-llama/Llama-3.2-3B-Instruct",
+        #     # max_tokens=500,
         #     # api_key=os.getenv("HF_TOKEN")
         # ),
         # model=Gemini(id="gemini-1.5-flash"),
         # model=Ollama(id="myphi4"),
-        model=Groq(id="llama-3.3-70b-versatile"),
-        tools=[DuckDuckGo()],
+        # model=Groq(id="llama-3.3-70b-versatile"),
+        tools=[DuckDuckGoTools()],
         # instructions=["Always include sources"],
         show_tool_calls=True,
         markdown=True,

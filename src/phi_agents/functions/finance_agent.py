@@ -1,10 +1,10 @@
-from phi.agent import Agent
+from agno.agent import Agent
 
-from phi.model.openai import OpenAIChat
-from phi.model.google import Gemini
-from phi.model.ollama import Ollama
+from agno.models.openai import OpenAIChat
+from agno.models.google import Gemini
+from agno.models.ollama import Ollama
 
-from phi.tools.yfinance import YFinanceTools
+from agno.tools.yfinance import YFinanceTools
 
 from dotenv import load_dotenv
 
