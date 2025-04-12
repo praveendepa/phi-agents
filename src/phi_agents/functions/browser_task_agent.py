@@ -7,7 +7,7 @@ from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.models.huggingface import HuggingFace
 from agno.models.google import Gemini
-from agno.models.ollama import Ollama
+# from agno.models.ollama import Ollama
 
 from phi_agents.functions.browser_tools import BrowserTools
 

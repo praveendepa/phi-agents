@@ -8,16 +8,16 @@ from agno.models.google import Gemini
 # from agno.models.ollama import Ollama
 from agno.models.groq import Groq
 
-from agno.tools.duckduckgo import DuckDuckGoTools
+from agno.tools.api import CustomApiTools
 
 from dotenv import load_dotenv
 
 load_dotenv(".env")
 
-def web_agent():
-    web_agent = Agent(
-        name="Web Agent",
-        role="Search the web for information",
+def call_api_agent():
+    api_agent = Agent(
+        name="API call Agent",
+        role="API end point that takes a question about formula 1 drivers, teams, and race information",
         model=OpenAIChat(id="gpt-4o"),
         # model=HuggingFaceChat(
         #     id="meta-llama/Meta-Llama-3-8B-Instruct", 
@@ -28,12 +28,12 @@ def web_agent():
         # model=Gemini(id="gemini-1.5-flash"),
         # model=Ollama(id="myphi4"),
         # model=Groq(id="llama-3.3-70b-versatile"),
-        tools=[DuckDuckGoTools()],
+        tools=[CustomApiTools(base_url="http://127.0.0.1:8000/my-sql-api?question=", make_request=True)],
         # instructions=["Always include sources"],
         show_tool_calls=True,
         markdown=True,
     )
-    return web_agent
+    return api_agent
 
 if __name__ == "__main__":
-    web_agent().print_response("Tell me about sikkim", stream=True)
+    call_api_agent().print_response("who is the best driver in 2010", stream=True)

@@ -2,7 +2,7 @@ from agno.agent import Agent
 
 from agno.models.openai import OpenAIChat
 from agno.models.google import Gemini
-from agno.models.ollama import Ollama
+# from agno.models.ollama import Ollama
 
 from agno.tools.yfinance import YFinanceTools
 
