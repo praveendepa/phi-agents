@@ -171,3 +171,10 @@ cython_debug/
 .pypirc
 
 .DS_Store
+
+data
+data/
+data/*
+data/*/*
+
+.scripts

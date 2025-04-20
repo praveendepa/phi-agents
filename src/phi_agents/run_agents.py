@@ -41,7 +41,7 @@ agent_team = Agent(
     # model=Gemini(id="gemini-1.5-flash"),
     # model=Ollama(id="myphi4"),
     # model=Groq(id="llama-3.3-70b-versatile"),
-    team=[web_agent, finance_agent, weather_agent, api_agent],
+    team=[web_agent, finance_agent, weather_agent, sql_agent],
     instructions=["Always include sources", "Use tables to display data", "only use the agents in the team to answer questions", "do not search the web"],
     show_tool_calls=True,
     markdown=True,
@@ -53,7 +53,8 @@ agent_team = Agent(
 # agent_team.print_response("what is yesterday's temperature  in london", stream=True)
 # agent_team.print_response("whats news in sikkim", stream=True)
 # agent_team.print_response("Find a one-way flight from singapore to hyderabad on 28 January 2025 on Google Flights. Return me the cheapest option", stream=True)
-agent_team.print_response("which formual 1 driver and team is the best combination?", stream=True)
+# agent_team.print_response("which formual 1 driver and team is the best combination?", stream=True)
+agent_team.print_response("which team won most formuala 1 races in 2012?", stream=True)
 
 # app = Playground(agents=[finance_agent, web_agent, weather_agent]).get_app()
 

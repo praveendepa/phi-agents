@@ -21,7 +21,11 @@ Examples with table joins:
 View the README for instructions on how to run the application.
 """
 
+import os
 import json
+# from google.cloud.sql.connector import Connector
+# import pg8000
+# import sqlalchemy
 from pathlib import Path
 from textwrap import dedent
 from typing import Optional
@@ -40,7 +44,55 @@ from agno.tools.sql import SQLTools
 from agno.vectordb.pgvector import PgVector
 
 # ************* Database Connection *************
-db_url = "postgresql+psycopg://ai:ai@localhost:5532/ai"
+# db_url = "postgresql+psycopg://ai:ai@localhost:5532/ai"
+# pool.url = f"postgresql+pg8000://{db_user}:{db_password}@/{db_name}?host=/cloudsql/{INSTANCE_CONNECTION_NAME}"
+# DATABASE_URL=postgres://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_BASE}?host=${CLOUD_SQL_CONNECTION_NAME}
+# connection_string = f"{driver}://postgres:{password}@127.0.0.1:5432/{database}"
+# 35.235.244.33
+
+# from dotenv import load_dotenv
+# load_dotenv("./.env") 
+
+# initialize parameters
+project_id = os.getenv("project_id")
+region = os.getenv("region")
+instance_name = os.getenv("instance_name")
+db_user = os.getenv("db_user")
+db_password = os.getenv("db_password")
+db_host = os.getenv("db_host")
+db_port = os.getenv("db_port")
+db_name = os.getenv("db_name")
+
+
+# # Set the connection name for the Cloud SQL instance
+# INSTANCE_CONNECTION_NAME = f"{project_id}:{region}:{instance_name}" # i.e demo-project:us-central1:demo-instance
+
+
+# # initialize Connector object
+# connector = Connector()
+
+# # function to return the database connection object
+# def getconn():
+#    conn = connector.connect(
+#        INSTANCE_CONNECTION_NAME,
+#        "pg8000",
+#        user=db_user,
+#        password=db_password,
+#        db=db_name
+#    )
+#    return conn
+
+# pool = sqlalchemy.create_engine(
+#    "postgresql+pg8000://",
+#    creator=getconn,
+# )
+
+# db_url = "postgresql+pg8000://postgres:agno4ai@/ai?host=/cloudsql/nifty-state-622:us-central1:f1data/.s.PGSQL.5432"
+# db_url = "postgresql+pg8000://postgres:agno4ai@/ai?host=/cloudsql/nifty-state-622:us-central1:f1data"
+
+db_url = f"postgresql+psycopg://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+# db_url = "postgresql+psycopg://ai:ai@localhost:5532/ai"
+
 # *******************************
 
 # ************* Paths *************
