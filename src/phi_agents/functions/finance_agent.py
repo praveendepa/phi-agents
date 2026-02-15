@@ -1,3 +1,9 @@
+import sys
+sys.path.append("src/")
+
+from phi_agents.logger import get_logger
+logger = get_logger(__name__)
+
 from agno.agent import Agent
 
 from agno.models.openai import OpenAIChat
@@ -10,6 +16,7 @@ from dotenv import load_dotenv
 load_dotenv(".env")
 
 def finance_agent():
+    logger.debug("Initializing Finance Agent")
     finance_agent = Agent(
         name="Finance Agent",
         role="Get financial data",
@@ -21,7 +28,9 @@ def finance_agent():
         show_tool_calls=True,
         markdown=True,
     )
+    logger.debug("Finance Agent initialized successfully")
     return finance_agent
 
 if __name__ == "__main__":
+    logger.info("Running Finance Agent standalone")
     finance_agent().print_response("Summarize analyst recommendations for NVDA", stream=True)

@@ -1,5 +1,10 @@
 import os
 import json
+import sys
+sys.path.append("src/")
+
+from phi_agents.logger import get_logger
+logger = get_logger(__name__)
 
 from agno.agent import Agent
 
@@ -21,6 +26,7 @@ with open("config.json", "r") as file:
 db_host = config[os.getenv("ENV")]["db_host"]
 
 def call_api_agent():
+    logger.debug("Initializing API Call Agent")
     api_agent = Agent(
         name="API call Agent",
         role="API end point that takes a question about formula 1 drivers, teams, and race information",
@@ -41,7 +47,9 @@ def call_api_agent():
         show_tool_calls=True,
         markdown=True,
     )
+    logger.debug("API Call Agent initialized successfully")
     return api_agent
 
 if __name__ == "__main__":
+    logger.info("Running API Call Agent standalone")
     call_api_agent().print_response("who is the best driver in 2010", stream=True)

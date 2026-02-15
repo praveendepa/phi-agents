@@ -2,6 +2,9 @@ import os
 import sys
 sys.path.append("src/")
 
+from phi_agents.logger import get_logger
+logger = get_logger(__name__)
+
 from agno.agent import Agent
 
 from agno.models.openai import OpenAIChat
@@ -16,7 +19,7 @@ from dotenv import load_dotenv
 load_dotenv(".env")
 
 def browser_agent():
-
+    logger.debug("Initializing Browser Agent")
     browser_agent = Agent(
         name="Browser Search Agent",
         role="Use the browser to do a series of tasks to answer a user query",
@@ -34,8 +37,9 @@ def browser_agent():
         show_tool_calls=True,
         markdown=True,
     )
+    logger.debug("Browser Agent initialized successfully")
     return browser_agent
 
 if __name__ == "__main__":
+    logger.info("Running Browser Agent standalone")
     browser_agent().print_response("Find a one-way flight from singapore to hyderabad on 28 January 2025.", stream=True)
-    # browser_agent().print_response()

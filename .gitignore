@@ -178,3 +178,4 @@ data/*
 data/*/*
 
 .scripts
+.config.json

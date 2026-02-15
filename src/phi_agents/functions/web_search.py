@@ -1,4 +1,9 @@
 import os
+import sys
+sys.path.append("src/")
+
+from phi_agents.logger import get_logger
+logger = get_logger(__name__)
 
 from agno.agent import Agent
 
@@ -15,6 +20,7 @@ from dotenv import load_dotenv
 load_dotenv(".env")
 
 def web_agent():
+    logger.debug("Initializing Web Agent")
     web_agent = Agent(
         name="Web Agent",
         role="Search the web for information",
@@ -33,7 +39,9 @@ def web_agent():
         show_tool_calls=True,
         markdown=True,
     )
+    logger.debug("Web Agent initialized successfully")
     return web_agent
 
 if __name__ == "__main__":
+    logger.info("Running Web Agent standalone")
     web_agent().print_response("Tell me about sikkim", stream=True)

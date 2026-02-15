@@ -1,9 +1,12 @@
 from io import StringIO
+import sys
+sys.path.append("src/")
 
 import pandas as pd
 import requests
 from agents import db_url
-from agno.utils.log import logger
+from phi_agents.logger import get_logger
+logger = get_logger(__name__)
 from sqlalchemy import create_engine
 
 s3_uri = "https://agno-public.s3.amazonaws.com/f1"
