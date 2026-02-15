@@ -3,6 +3,9 @@ import sys
 import json
 sys.path.append("src/")
 
+from phi_agents.logger import get_logger
+logger = get_logger(__name__)
+
 from agno.agent import Agent
 from agno.playground import Playground, serve_playground_app
 
@@ -16,6 +19,8 @@ from agno.models.huggingface import HuggingFace
 from dotenv import load_dotenv
 load_dotenv(".env")
 
+logger.info("Loading environment and configuration...")
+
 from phi_agents.functions.supervisor_agent import supervisor_agent
 from phi_agents.functions.finance_agent import finance_agent
 from phi_agents.functions.web_search import web_agent
@@ -28,6 +33,8 @@ import streamlit as st
 with open("config.json", "r") as file:
     config = json.load(file)
 
+logger.info("Configuration loaded successfully")
+
 # Set up parameters
 db_host = config[os.getenv("ENV")]["db_host"]
 db_port = config[os.getenv("ENV")]["db_port"]
@@ -35,13 +42,20 @@ db_name = config[os.getenv("ENV")]["db_name"]
 db_user = config[os.getenv("ENV")]["db_user"]
 db_password = config[os.getenv("ENV")]["db_password"]
 
+logger.info("Initializing agent team...")
 web_agent = web_agent()
+logger.info("Web agent initialized")
 finance_agent = finance_agent()
+logger.info("Finance agent initialized")
 weather_agent = weather_agent()
+logger.info("Weather agent initialized")
 # browser_agent = browser_agent()
 sql_agent = get_sql_agent()
+logger.info("SQL agent initialized")
 api_agent = call_api_agent()
+logger.info("API agent initialized")
 supervisor = supervisor_agent()
+logger.info("Supervisor agent initialized")
 
 agent_team = Agent(
     model=OpenAIChat(id="gpt-4o"),
@@ -59,6 +73,8 @@ agent_team = Agent(
     show_tool_calls=True,
     markdown=True,
 )
+
+logger.info("Agent team created successfully")
 
 # agent_team.print_response("Summarize analyst recommendations and share the latest news for PG", stream=True)
 # agent_team.print_response("forecast of weather in cincinnati", stream=True)
@@ -83,6 +99,7 @@ question = st.text_input("Enter your question:", "")
 # Button to trigger the agent response
 if st.button("Get Response"):
     if question.strip():
+        logger.info(f"User question received: {question[:50]}...")
         with st.spinner("🤔 Thinking..."):
             try:
                 response = ""
@@ -92,7 +109,9 @@ if st.button("Get Response"):
                         response += chunk.content
                 # Display the full response after it is completely collected
                 st.markdown(response)
+                logger.info(f"Response generated successfully for question: {question[:50]}...")
             except Exception as e:
+                logger.error(f"Error processing question: {str(e)}", exc_info=True)
                 st.error(f"An error occurred: {str(e)}")
     else:
         st.warning("Please enter a question to proceed.")
