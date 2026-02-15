@@ -1,4 +1,5 @@
 import os
+import json
 
 from agno.agent import Agent
 
@@ -11,8 +12,13 @@ from agno.models.groq import Groq
 from agno.tools.api import CustomApiTools
 
 from dotenv import load_dotenv
-
 load_dotenv(".env")
+
+with open("config.json", "r") as file:
+    config = json.load(file)
+
+# Set up parameters
+db_host = config[os.getenv("ENV")]["db_host"]
 
 def call_api_agent():
     api_agent = Agent(
@@ -29,6 +35,7 @@ def call_api_agent():
         # model=Ollama(id="myphi4"),
         # model=Groq(id="llama-3.3-70b-versatile"),
         # tools=[CustomApiTools(base_url="http://127.0.0.1:8000/my-sql-api?question=", make_request=True)],
+        # tools=[CustomApiTools(base_url=f"http://{db_host}:8000/my-sql-api?question=", make_request=True)],
         tools=[CustomApiTools(base_url="https://sample-239471998272.us-central1.run.app/my-sql-api?question=", make_request=True)],
         # instructions=["Always include sources"],
         show_tool_calls=True,

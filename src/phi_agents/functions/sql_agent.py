@@ -50,19 +50,28 @@ from agno.vectordb.pgvector import PgVector
 # connection_string = f"{driver}://postgres:{password}@127.0.0.1:5432/{database}"
 # 35.235.244.33
 
-# from dotenv import load_dotenv
-# load_dotenv("./.env") 
+from dotenv import load_dotenv
+load_dotenv("./.env") 
 
 # initialize parameters
-project_id = os.getenv("project_id")
-region = os.getenv("region")
-instance_name = os.getenv("instance_name")
-db_user = os.getenv("db_user")
-db_password = os.getenv("db_password")
-db_host = os.getenv("db_host")
-db_port = os.getenv("db_port")
-db_name = os.getenv("db_name")
+# project_id = os.getenv("project_id")
+# region = os.getenv("region")
+# instance_name = os.getenv("instance_name")
+# db_user = os.getenv("db_user")
+# db_password = os.getenv("db_password")
+# db_host = os.getenv("db_host")
+# db_port = os.getenv("db_port")
+# db_name = os.getenv("db_name")
 
+with open("config.json", "r") as file:
+    config = json.load(file)
+
+# Set up parameters
+db_host = config[os.getenv("ENV")]["db_host"]
+db_port = config[os.getenv("ENV")]["db_port"]
+db_name = config[os.getenv("ENV")]["db_name"]
+db_user = config[os.getenv("ENV")]["db_user"]
+db_password = config[os.getenv("ENV")]["db_password"]
 
 # # Set the connection name for the Cloud SQL instance
 # INSTANCE_CONNECTION_NAME = f"{project_id}:{region}:{instance_name}" # i.e demo-project:us-central1:demo-instance

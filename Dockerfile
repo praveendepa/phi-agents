@@ -5,6 +5,7 @@ ENV APP_HOME /root
 WORKDIR $APP_HOME
 # COPY /app $APP_HOME/app
 COPY /src $APP_HOME/src/
+COPY config.json .
 
 RUN pip install --upgrade pip
 # COPY requirements.txt .

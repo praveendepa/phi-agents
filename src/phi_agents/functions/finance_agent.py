@@ -7,7 +7,6 @@ from agno.models.google import Gemini
 from agno.tools.yfinance import YFinanceTools
 
 from dotenv import load_dotenv
-
 load_dotenv(".env")
 
 def finance_agent():

@@ -1,0 +1,18 @@
+{
+    "local": {
+        "db_host": "localhost",
+        "db_user": "ai",
+        "db_password": "ai",
+        "db_port": "5432",
+        "db_name": "ai"
+    },
+    "cloud": {
+        "project_id": "nifty-state-622",
+        "region": "us-central1",
+        "db_host": "34.9.223.24",
+        "db_user": "ai",
+        "db_password": "ai",
+        "db_port": "5432",
+        "db_name": "ai"
+    }
+}

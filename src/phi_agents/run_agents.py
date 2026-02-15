@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 sys.path.append("src/")
 
 from agno.agent import Agent
@@ -13,15 +14,26 @@ from agno.models.huggingface import HuggingFace
 
 
 from dotenv import load_dotenv
+load_dotenv(".env")
 
+from phi_agents.functions.supervisor_agent import supervisor_agent
 from phi_agents.functions.finance_agent import finance_agent
 from phi_agents.functions.web_search import web_agent
 from phi_agents.functions.weather_agent import weather_agent    
 # from phi_agents.functions.browser_task_agent import browser_agent    
 from phi_agents.functions.sql_agent import get_sql_agent    
 from phi_agents.functions.api_calls import call_api_agent    
+import streamlit as st
 
-load_dotenv(".env")
+with open("config.json", "r") as file:
+    config = json.load(file)
+
+# Set up parameters
+db_host = config[os.getenv("ENV")]["db_host"]
+db_port = config[os.getenv("ENV")]["db_port"]
+db_name = config[os.getenv("ENV")]["db_name"]
+db_user = config[os.getenv("ENV")]["db_user"]
+db_password = config[os.getenv("ENV")]["db_password"]
 
 web_agent = web_agent()
 finance_agent = finance_agent()
@@ -29,6 +41,7 @@ weather_agent = weather_agent()
 # browser_agent = browser_agent()
 sql_agent = get_sql_agent()
 api_agent = call_api_agent()
+supervisor = supervisor_agent()
 
 agent_team = Agent(
     model=OpenAIChat(id="gpt-4o"),
@@ -41,8 +54,8 @@ agent_team = Agent(
     # model=Gemini(id="gemini-1.5-flash"),
     # model=Ollama(id="myphi4"),
     # model=Groq(id="llama-3.3-70b-versatile"),
-    team=[web_agent, finance_agent, weather_agent, sql_agent],
-    instructions=["Always include sources", "Use tables to display data", "only use the agents in the team to answer questions", "do not search the web"],
+    team=[supervisor, finance_agent, weather_agent, api_agent],
+    instructions=["Always include sources", "Use tables to display data", "only use the agents in the team to answer questions", "Supervisor coordinates all agent interactions"],
     show_tool_calls=True,
     markdown=True,
 )
@@ -54,9 +67,40 @@ agent_team = Agent(
 # agent_team.print_response("whats news in sikkim", stream=True)
 # agent_team.print_response("Find a one-way flight from singapore to hyderabad on 28 January 2025 on Google Flights. Return me the cheapest option", stream=True)
 # agent_team.print_response("which formual 1 driver and team is the best combination?", stream=True)
-agent_team.print_response("which team won most formuala 1 races in 2012?", stream=True)
+# agent_team.print_response("which team won most formuala 1 races in 2012?", stream=True)
+
+
+
+# Streamlit app
+st.set_page_config(page_title="Agent Team Frontend", layout="wide")
+
+st.title("Agent Team Frontend")
+st.markdown("Ask questions and get intelligent responses from the agent team.")
+
+# Input field for user question
+question = st.text_input("Enter your question:", "")
+
+# Button to trigger the agent response
+if st.button("Get Response"):
+    if question.strip():
+        with st.spinner("🤔 Thinking..."):
+            try:
+                response = ""
+                run_response = agent_team.run(question, stream=True)
+                for chunk in run_response:
+                    if chunk.content:
+                        response += chunk.content
+                # Display the full response after it is completely collected
+                st.markdown(response)
+            except Exception as e:
+                st.error(f"An error occurred: {str(e)}")
+    else:
+        st.warning("Please enter a question to proceed.")
+
 
 # app = Playground(agents=[finance_agent, web_agent, weather_agent]).get_app()
 
 # if __name__ == "__main__":
 #     serve_playground_app("run_agents:app", reload=True)
+
+
