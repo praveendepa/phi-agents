@@ -7,14 +7,9 @@ from phi_agents.logger import get_logger
 logger = get_logger(__name__)
 
 from agno.agent import Agent
-
-from agno.models.openai import OpenAIChat
-from agno.models.huggingface import HuggingFace
-from agno.models.google import Gemini
-# from agno.models.ollama import Ollama
-from agno.models.groq import Groq
-
 from agno.tools.api import CustomApiTools
+
+from phi_agents.functions.model_factory import get_model_from_config, get_default_model_id
 
 from dotenv import load_dotenv
 load_dotenv(".env")
@@ -25,21 +20,23 @@ with open("config.json", "r") as file:
 # Set up parameters
 db_host = config[os.getenv("ENV")]["db_host"]
 
-def call_api_agent():
-    logger.debug("Initializing API Call Agent")
+def call_api_agent(model_id: str = None):
+    """Create an API call agent.
+    
+    Args:
+        model_id: Model identifier in format 'provider:model_name'.
+                 If None, uses default from config.json
+    """
+    if model_id is None:
+        model_id = get_default_model_id()
+    
+    logger.debug(f"Initializing API Call Agent with model_id: {model_id}")
+    model = get_model_from_config(model_id)
+    
     api_agent = Agent(
         name="API call Agent",
         role="API end point that takes a question about formula 1 drivers, teams, and race information",
-        model=OpenAIChat(id="gpt-4o"),
-        # model=HuggingFaceChat(
-        #     id="meta-llama/Meta-Llama-3-8B-Instruct", 
-        #     # id="meta-llama/Llama-3.2-3B-Instruct",
-        #     # max_tokens=500,
-        #     # api_key=os.getenv("HF_TOKEN")
-        # ),
-        # model=Gemini(id="gemini-1.5-flash"),
-        # model=Ollama(id="myphi4"),
-        # model=Groq(id="llama-3.3-70b-versatile"),
+        model=model,
         # tools=[CustomApiTools(base_url="http://127.0.0.1:8000/my-sql-api?question=", make_request=True)],
         # tools=[CustomApiTools(base_url=f"http://{db_host}:8000/my-sql-api?question=", make_request=True)],
         tools=[CustomApiTools(base_url="https://sample-239471998272.us-central1.run.app/my-sql-api?question=", make_request=True)],

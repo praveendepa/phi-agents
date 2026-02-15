@@ -48,6 +48,8 @@ from agno.tools.file import FileTools
 from agno.tools.sql import SQLTools
 from agno.vectordb.pgvector import PgVector
 
+from phi_agents.functions.model_factory import get_model_from_config
+
 # ************* Database Connection *************
 # db_url = "postgresql+psycopg://ai:ai@localhost:5532/ai"
 # pool.url = f"postgresql+pg8000://{db_user}:{db_password}@/{db_name}?host=/cloudsql/{INSTANCE_CONNECTION_NAME}"
@@ -191,7 +193,7 @@ semantic_model_str = json.dumps(semantic_model, indent=2)
 
 def get_sql_agent(
     user_id: Optional[str] = None,
-    model_id: str = "openai:gpt-4o",
+    model_id: str = None,
     session_id: Optional[str] = None,
     debug_mode: bool = True,
 ) -> Agent:
@@ -200,24 +202,17 @@ def get_sql_agent(
     Args:
         user_id: Optional user identifier
         debug_mode: Enable debug logging
-        model_id: Model identifier in format 'provider:model_name'
+        model_id: Model identifier in format 'provider:model_name'.
+                 If None, uses default from config.json
     """
+    if model_id is None:
+        from phi_agents.functions.model_factory import get_default_model_id
+        model_id = get_default_model_id()
+    
     logger.debug(f"Initializing SQL Agent with model_id: {model_id}, user_id: {user_id}")
     
-    # Parse model provider and name
-    provider, model_name = model_id.split(":")
-    logger.debug(f"Parsed model provider: {provider}, model_name: {model_name}")
-
-    # Select appropriate model class based on provider
-    if provider == "openai":
-        model = OpenAIChat(id=model_name)
-    elif provider == "google":
-        model = Gemini(id=model_name)
-    elif provider == "anthropic":
-        model = Claude(id=model_name)
-    else:
-        logger.error(f"Unsupported model provider: {provider}")
-        raise ValueError(f"Unsupported model provider: {provider}")
+    # Use model factory to instantiate model
+    model = get_model_from_config(model_id)
 
     sql_agent = Agent(
         name="SQL Agent",

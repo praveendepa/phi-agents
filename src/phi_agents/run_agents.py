@@ -9,12 +9,7 @@ logger = get_logger(__name__)
 from agno.agent import Agent
 from agno.playground import Playground, serve_playground_app
 
-from agno.models.openai import OpenAIChat
-from agno.models.huggingface import HuggingFace
-# from agno.models.google import Gemini
-# from agno.models.ollama import Ollama
-# from agno.models.groq import Groq
-
+from phi_agents.functions.model_factory import get_model_from_config, get_default_model_id
 
 from dotenv import load_dotenv
 load_dotenv(".env")
@@ -35,6 +30,10 @@ with open("config.json", "r") as file:
 
 logger.info("Configuration loaded successfully")
 
+# Get default model_id from configuration
+default_model_id = get_default_model_id()
+logger.info(f"Using model configuration: {default_model_id}")
+
 # Set up parameters
 db_host = config[os.getenv("ENV")]["db_host"]
 db_port = config[os.getenv("ENV")]["db_port"]
@@ -43,32 +42,24 @@ db_user = config[os.getenv("ENV")]["db_user"]
 db_password = config[os.getenv("ENV")]["db_password"]
 
 logger.info("Initializing agent team...")
-web_agent = web_agent()
+web_agent_instance = web_agent(model_id=default_model_id)
 logger.info("Web agent initialized")
-finance_agent = finance_agent()
+finance_agent_instance = finance_agent(model_id=default_model_id)
 logger.info("Finance agent initialized")
-weather_agent = weather_agent()
+weather_agent_instance = weather_agent(model_id=default_model_id)
 logger.info("Weather agent initialized")
 # browser_agent = browser_agent()
-sql_agent = get_sql_agent()
+sql_agent_instance = get_sql_agent(model_id=default_model_id)
 logger.info("SQL agent initialized")
-api_agent = call_api_agent()
+api_agent_instance = call_api_agent(model_id=default_model_id)
 logger.info("API agent initialized")
-supervisor = supervisor_agent()
+supervisor_instance = supervisor_agent(model_id=default_model_id)
 logger.info("Supervisor agent initialized")
 
+# Create team with dynamic model configuration
 agent_team = Agent(
-    model=OpenAIChat(id="gpt-4o"),
-    # model=HuggingFace(
-        # # id="meta-llama/Meta-Llama-3-8B-Instruct", 
-        # id="meta-llama/Llama-3.2-3B-Instruct",
-        # max_tokens=500,
-        # api_key=os.getenv("HF_TOKEN")
-    # ),
-    # model=Gemini(id="gemini-1.5-flash"),
-    # model=Ollama(id="myphi4"),
-    # model=Groq(id="llama-3.3-70b-versatile"),
-    team=[supervisor, finance_agent, weather_agent, api_agent],
+    model=get_model_from_config(default_model_id),
+    team=[supervisor_instance, finance_agent_instance, weather_agent_instance, api_agent_instance],
     instructions=["Always include sources", "Use tables to display data", "only use the agents in the team to answer questions", "Supervisor coordinates all agent interactions"],
     show_tool_calls=True,
     markdown=True,

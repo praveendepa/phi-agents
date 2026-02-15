@@ -20,12 +20,21 @@ load_dotenv("./.env")
 
 from fastapi import FastAPI, HTTPException
 from phi_agents.functions.sql_agent import get_sql_agent
+from phi_agents.functions.model_factory import get_default_model_id
 
 logger.info("FastAPI application initialized")
 app = FastAPI()
 
+# Get default model_id from configuration
+default_model_id = get_default_model_id()
+logger.info(f"Using default model: {default_model_id}")
+
 @app.get("/my-sql-api")
-def sql_agent_endpoint(question: str = "champion driver in 2010", model_id: str = "openai:gpt-4o", session_id: str = None, debug_mode: bool = True):
+def sql_agent_endpoint(question: str = "champion driver in 2010", model_id: str = None, session_id: str = None, debug_mode: bool = True):
+    # Use default model if not specified
+    if model_id is None:
+        model_id = default_model_id
+    
     logger.info(f"SQL API endpoint called - Question: {question[:50]}..., Model: {model_id}")
     
     # # initialize parameters
