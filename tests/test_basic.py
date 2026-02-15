@@ -1,6 +1,11 @@
 import json
 import os
 import glob
+import sys
+sys.path.append("src/")
+
+from phi_agents.logger import get_logger
+logger = get_logger(__name__)
 
 
 def test_readme_exists_and_nonempty():

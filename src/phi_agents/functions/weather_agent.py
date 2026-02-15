@@ -4,6 +4,9 @@ import json
 import sys
 sys.path.append("src/")
 
+from phi_agents.logger import get_logger
+logger = get_logger(__name__)
+
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.models.google import Gemini
@@ -32,6 +35,7 @@ load_dotenv(".env")
 
 
 def weather_agent():
+    logger.debug("Initializing Weather Agent")
     weather_agent = Agent(
         name="Weather Agent",
         role="Get weather data",
@@ -44,9 +48,11 @@ def weather_agent():
         show_tool_calls=True,
         markdown=True,
     )
+    logger.debug("Weather Agent initialized successfully")
     return weather_agent
 
 if __name__ == "__main__":
+    logger.info("Running Weather Agent standalone")
     weather_agent().print_response("Get weather in singapore", stream=True)
 
 # agent = Agent(name="Weather Agent", role="Get weather data", tools=[get_current_weather], show_tool_calls=True, markdown=True)

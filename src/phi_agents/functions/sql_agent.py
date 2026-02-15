@@ -23,12 +23,17 @@ View the README for instructions on how to run the application.
 
 import os
 import json
+import sys
+sys.path.append("src/")
 # from google.cloud.sql.connector import Connector
 # import pg8000
 # import sqlalchemy
 from pathlib import Path
 from textwrap import dedent
 from typing import Optional
+
+from phi_agents.logger import get_logger
+logger = get_logger(__name__)
 
 from agno.agent import Agent
 from agno.embedder.openai import OpenAIEmbedder
@@ -197,8 +202,11 @@ def get_sql_agent(
         debug_mode: Enable debug logging
         model_id: Model identifier in format 'provider:model_name'
     """
+    logger.debug(f"Initializing SQL Agent with model_id: {model_id}, user_id: {user_id}")
+    
     # Parse model provider and name
     provider, model_name = model_id.split(":")
+    logger.debug(f"Parsed model provider: {provider}, model_name: {model_name}")
 
     # Select appropriate model class based on provider
     if provider == "openai":
@@ -208,9 +216,10 @@ def get_sql_agent(
     elif provider == "anthropic":
         model = Claude(id=model_name)
     else:
+        logger.error(f"Unsupported model provider: {provider}")
         raise ValueError(f"Unsupported model provider: {provider}")
 
-    return Agent(
+    sql_agent = Agent(
         name="SQL Agent",
         role="Get formula 1 information from SQL database",
         model=model,
@@ -297,3 +306,5 @@ def get_sql_agent(
         # Set to True to display tool calls in the response message
         # show_tool_calls=True,
     )
+    logger.debug("SQL Agent initialized successfully")
+    return sql_agent

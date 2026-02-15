@@ -10,11 +10,17 @@ agent team. It:
 
 Example queries:
 - "Compare the latest financial performance of Tesla with weather impact on supply chain"
-- "Search for AI news and get analyst recommendations for related companies"
-- "Find the best F1 driver for 2024 and explain using latest news and financial data"
+- "Search for AI news and get analyst recommendations for related companies" - "Find the best F1 driver fsys.path.append("src/")impory syst syssys.path.append("src/")
+or 2024 and explain using latest news and financial data"
 """
 
 import os
+import sys
+sys.path.append("src/")
+
+from phi_agents.logger import get_logger
+logger = get_logger(__name__)
+
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.models.huggingface import HuggingFace
@@ -26,6 +32,7 @@ load_dotenv(".env")
 
 
 def supervisor_agent(model_id: str = "openai:gpt-4o"):
+    logger.debug(f"Initializing Supervisor Agent with model_id: {model_id}")
     """
     Create a supervisor agent that coordinates the specialist agent team.
     
@@ -60,6 +67,7 @@ def supervisor_agent(model_id: str = "openai:gpt-4o"):
         show_tool_calls=True,
         markdown=True,
     )
+    logger.debug("Supervisor Agent initialized successfully")
     return supervisor
 
 

@@ -2,9 +2,12 @@ import requests
 from os import getenv
 from typing import Optional, Dict, Any, List
 import json
+import sys
+sys.path.append("src/")
 
 from agno.tools import Toolkit
-from agno.utils.log import logger
+from phi_agents.logger import get_logger
+logger = get_logger(__name__)
 
 
 class WeatherTools(Toolkit):
