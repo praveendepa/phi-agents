@@ -68,3 +68,13 @@ def test_supervisor_documentation_exists():
     assert "Supervisor Agent" in content, "Supervisor Agent title not found in documentation"
     assert "orchestrat" in content.lower(), "Documentation does not mention orchestration"
 
+def test_run_agents_uses_agno_3_team_api():
+    """Ensure the app uses the Agno 3.x team API instead of the removed team= constructor."""
+    run_agents_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, "src/phi_agents/run_agents.py"))
+    with open(run_agents_path, "r") as f:
+        content = f.read()
+
+    assert "from agno.team import Team" in content, "run_agents.py still imports the old Agno entrypoint"
+    assert "Team(" in content, "run_agents.py should instantiate the Agno Team API"
+    assert "members=[" in content, "Team should use members= for Agno 3.x"
+    assert "team=[" not in content, "run_agents.py still uses the removed team= constructor"

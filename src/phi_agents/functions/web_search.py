@@ -31,9 +31,9 @@ def web_agent(model_id: str = None):
         name="Web Agent",
         role="Search the web for information",
         model=model,
-        tools=[DuckDuckGoTools()],
+        tools=[DuckDuckGoTools(enable_search=True, enable_news=True)],
         # instructions=["Always include sources"],
-        show_tool_calls=True,
+        # show_tool_calls=True,
         markdown=True,
     )
     logger.debug("Web Agent initialized successfully")

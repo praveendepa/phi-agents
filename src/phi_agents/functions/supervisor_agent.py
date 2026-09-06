@@ -65,7 +65,7 @@ def supervisor_agent(model_id: str = None):
             "If multiple agents are needed, coordinate their responses and identify connections/insights across domains.",
             "For ambiguous queries, ask clarifying questions or explain your routing decision to the user.",
         ],
-        show_tool_calls=True,
+        # show_tool_calls=True,
         markdown=True,
     )
     logger.debug("Supervisor Agent initialized successfully")
