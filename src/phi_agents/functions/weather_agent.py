@@ -51,7 +51,7 @@ def weather_agent(model_id: str = None):
         # tools=[get_current_weather],
         tools=[WeatherTools()],
         instructions=["Use tables to display data"],
-        show_tool_calls=True,
+        # show_tool_calls=True,
         markdown=True,
     )
     logger.debug("Weather Agent initialized successfully")

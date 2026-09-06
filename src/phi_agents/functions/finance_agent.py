@@ -5,7 +5,8 @@ from phi_agents.logger import get_logger
 logger = get_logger(__name__)
 
 from agno.agent import Agent
-from agno.tools.yfinance import YFinanceTools
+from agno.tools.finance import FinanceTools
+from agno.tools.finance.providers import YFinance
 
 from phi_agents.functions.model_factory import get_model_from_config, get_default_model_id
 
@@ -29,9 +30,9 @@ def finance_agent(model_id: str = None):
         name="Finance Agent",
         role="Get financial data",
         model=model,
-        tools=[YFinanceTools(stock_price=True, analyst_recommendations=True, company_info=True, company_news=True)],
+        tools=[FinanceTools(provider=YFinance())],
         instructions=["Use tables to display data"],
-        show_tool_calls=True,
+        # show_tool_calls=True,
         markdown=True,
     )
     logger.debug("Finance Agent initialized successfully")
