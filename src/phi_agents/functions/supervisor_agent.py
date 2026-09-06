@@ -10,8 +10,8 @@ agent team. It:
 
 Example queries:
 - "Compare the latest financial performance of Tesla with weather impact on supply chain"
-- "Search for AI news and get analyst recommendations for related companies" - "Find the best F1 driver fsys.path.append("src/")impory syst syssys.path.append("src/")
-or 2024 and explain using latest news and financial data"
+- "Search for AI news and get analyst recommendations for related companies"
+- "Find the best F1 driver for 2024 and explain using latest news and financial data"
 """
 
 import os
@@ -22,33 +22,34 @@ from phi_agents.logger import get_logger
 logger = get_logger(__name__)
 
 from agno.agent import Agent
-from agno.models.openai import OpenAIChat
-from agno.models.huggingface import HuggingFace
-from agno.models.google import Gemini
+from phi_agents.functions.model_factory import get_model_from_config, get_default_model_id
 
 from dotenv import load_dotenv
 
 load_dotenv(".env")
 
 
-def supervisor_agent(model_id: str = "openai:gpt-4o"):
-    logger.debug(f"Initializing Supervisor Agent with model_id: {model_id}")
-    """
-    Create a supervisor agent that coordinates the specialist agent team.
+def supervisor_agent(model_id: str = None):
+    """Create a supervisor agent that coordinates the specialist agent team.
     
     Args:
-        model_id: Model identifier to use (default: openai:gpt-4o)
+        model_id: Model identifier in format 'provider:model_name'.
+                 If None, uses default from config.json
     
     Returns:
         Agent instance configured as a supervisor
     """
+    if model_id is None:
+        model_id = get_default_model_id()
+    
+    logger.debug(f"Initializing Supervisor Agent with model_id: {model_id}")
+    model = get_model_from_config(model_id)
+    
     supervisor = Agent(
         name="Supervisor",
         role="Coordinate and oversee the agent team, route queries, and synthesize results",
         description="Acts as the central coordinator for the multi-agent system, delegating tasks to specialist agents and ensuring quality answers",
-        model=OpenAIChat(id="gpt-4o"),
-        # model=HuggingFace(
-        #     id="meta-llama/Llama-3.2-3B-Instruct",
+        model=model,
         #     # max_tokens=500,
         #     # api_key=os.getenv("HF_TOKEN")
         # ),

@@ -8,11 +8,8 @@ from phi_agents.logger import get_logger
 logger = get_logger(__name__)
 
 from agno.agent import Agent
-from agno.models.openai import OpenAIChat
-from agno.models.google import Gemini
-# from agno.models.ollama import Ollama
-
 from phi_agents.functions.weather_tools import WeatherTools
+from phi_agents.functions.model_factory import get_model_from_config, get_default_model_id
 
 from dotenv import load_dotenv
 load_dotenv(".env")
@@ -34,14 +31,23 @@ load_dotenv(".env")
 #     return json.dumps({"location": location, "temperature": response.json()['current']['temp_c']})
 
 
-def weather_agent():
-    logger.debug("Initializing Weather Agent")
+def weather_agent(model_id: str = None):
+    """Create a weather agent.
+    
+    Args:
+        model_id: Model identifier in format 'provider:model_name'.
+                 If None, uses default from config.json
+    """
+    if model_id is None:
+        model_id = get_default_model_id()
+    
+    logger.debug(f"Initializing Weather Agent with model_id: {model_id}")
+    model = get_model_from_config(model_id)
+    
     weather_agent = Agent(
         name="Weather Agent",
         role="Get weather data",
-        # model=OpenAIChat(id="gpt-4o"),
-        # model=Gemini(id="gemini-1.5-flash"),
-        # model=Ollama(id="myphi4"),
+        model=model,
         # tools=[get_current_weather],
         tools=[WeatherTools()],
         instructions=["Use tables to display data"],

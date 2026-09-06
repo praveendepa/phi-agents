@@ -5,24 +5,30 @@ from phi_agents.logger import get_logger
 logger = get_logger(__name__)
 
 from agno.agent import Agent
-
-from agno.models.openai import OpenAIChat
-from agno.models.google import Gemini
-# from agno.models.ollama import Ollama
-
 from agno.tools.yfinance import YFinanceTools
+
+from phi_agents.functions.model_factory import get_model_from_config, get_default_model_id
 
 from dotenv import load_dotenv
 load_dotenv(".env")
 
-def finance_agent():
-    logger.debug("Initializing Finance Agent")
+def finance_agent(model_id: str = None):
+    """Create a finance agent.
+    
+    Args:
+        model_id: Model identifier in format 'provider:model_name'.
+                 If None, uses default from config.json
+    """
+    if model_id is None:
+        model_id = get_default_model_id()
+    
+    logger.debug(f"Initializing Finance Agent with model_id: {model_id}")
+    model = get_model_from_config(model_id)
+    
     finance_agent = Agent(
         name="Finance Agent",
         role="Get financial data",
-        model=OpenAIChat(id="gpt-4o"),
-        # model=Gemini(id="gemini-1.5-flash"),
-        # model=Ollama(id="myphi4"),
+        model=model,
         tools=[YFinanceTools(stock_price=True, analyst_recommendations=True, company_info=True, company_news=True)],
         instructions=["Use tables to display data"],
         show_tool_calls=True,
